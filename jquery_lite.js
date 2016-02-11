@@ -1,11 +1,5 @@
 (function() {
 
-  // var fn = function () {
-  //   for(var i = 0; i < jQueryLite.$l.fnArray.length; i++) {
-  //     jQueryLite.$l.fnArray[i]();
-  //   }
-  // };
-
   if (typeof window.$l === "undefined") {
     window.$l = {};
   }
@@ -119,7 +113,6 @@
       var parent = this.HTMLElements[i].parentNode;
       dnCollection.push(parent);
     }
-    // dnCollection = [].concat.apply([], dnCollection);
     return new DOMNodeCollection(dnCollection);
   };
 
@@ -195,12 +188,7 @@
     xmlhttp.send();
   };
 
-
   var j = new $l(function() {
     console.log("page is loaded");
   });
-
-  $l.ajax({url: "http://api.openweathermap.org/data/2.5/weather?q=London,uk&appid=2de143494c0b295cca9337e1e96b00e0"});
-
-
 })();
