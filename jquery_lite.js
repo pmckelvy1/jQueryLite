@@ -9,12 +9,20 @@
     if (argument instanceof HTMLElement) {
       return new DOMNodeCollection([argument]);
     } else if (typeof argument === "string") {
-      var nodeList = document.querySelectorAll(argument);
-      nodeList = [].slice.call(nodeList);
-      return new DOMNodeCollection(nodeList);
+      var argMatch = argument.match(/<(\w+)>/);
+      if (argMatch) {
+        var el = document.createElement(argMatch[1]);
+        return new DOMNodeCollection([el]);
+      } else {
+        var nodeList = document.querySelectorAll(argument);
+        nodeList = [].slice.call(nodeList);
+        return new DOMNodeCollection(nodeList);
+      }
     } else if (typeof argument === "function") {
       fnArray.push(argument);
       document.addEventListener('DOMContentLoaded', argument, false);
+    } else if (argument === document) {
+      return new DOMNodeCollection([document]);
     }
   };
 
@@ -23,7 +31,7 @@
   };
 
   DOMNodeCollection.prototype.html = function (string) {
-    if (typeof string === "string") {
+    if (typeof string === "string" || typeof string === "number") {
       this.HTMLElements.forEach(function(element) {
         element.innerHTML = string;
       });
@@ -47,12 +55,29 @@
         newNode.innerHTML = argument.innerHTML;
         element.appendChild(newNode);
       });
-    } else if (argument instanceof jQueryLite.$l) {
+    } else if (argument instanceof window.$l) {
+      for (var i = 0; i < argument.HTMLElements.length; i++) {
+        this.append(argument.HTMLElements[i]);
+      }
+    } else if (argument instanceof DOMNodeCollection) {
       for (var i = 0; i < argument.HTMLElements.length; i++) {
         this.append(argument.HTMLElements[i]);
       }
     }
   };
+
+  DOMNodeCollection.prototype.css = function (styleName, styleValue) {
+    var style;
+    if (typeof styleValue === "undefined") {
+      style = window.getComputedStyle(this.HTMLElements[0]);
+      return style.getPropertyValue(styleName);
+    } else {
+      style = styleName + ": " + styleValue;
+      this.HTMLElements.forEach(function(element) {
+        element.setAttribute('style', style);
+      });
+    }
+  }
 
   DOMNodeCollection.prototype.attr = function (attributeName, value) {
     if (typeof value === "undefined") {
@@ -150,7 +175,9 @@
   };
 
   $l.extend = function (obj1, obj2) {
-    return Object.assign.apply(null, arguments);
+    var newOb = Object.assign.apply(null, arguments);
+    newOb.__proto__ = obj2.__proto__;
+    return newOb;
   };
 
   $l.ajax = function (options) {
@@ -189,6 +216,5 @@
   };
 
   var j = new $l(function() {
-    console.log("page is loaded");
   });
 })();
