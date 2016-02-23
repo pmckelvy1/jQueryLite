@@ -1,6 +1,6 @@
 # jQueryLite
 
-JQueryLite is a custom implementation of the popular javascript library jQuery.  It contains many of the core features of jQuery, and fully useable for simple DOM manipulation.
+JQueryLite is a custom implementation of the popular javascript library jQuery.  It contains many of the core features of jQuery, and is fully useable for simple DOM manipulation.
 
 ## Features
 
